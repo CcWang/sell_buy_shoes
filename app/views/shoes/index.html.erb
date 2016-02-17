@@ -1,0 +1,34 @@
+<a href="/dashboard/<%=@user.id%>">Go to Dashboard</a>
+<div>
+  <h1>All products not created by current user and haven't bought by user</h1>
+  <table>
+    <thead>
+      <tr>
+        <td>Product</td>
+        <td>Seller</td>
+        <td>Date Posted</td>
+        <td>Amount</td>
+        <td>Action</td>
+      </tr>
+    </thead>
+    <tbody>
+      <%@shoes.each do |s|%>
+        <%if s.seller_id != @user.id &&  s.buyer_id == nil%>
+          <tr>
+            <td><%=s.name%></td>
+            <td><%=s.seller.first_name%> <%=s.seller.last_name%></td>
+            <td><%=s.post_date.strftime("%B %d, %Y")%></td>
+            <td>$<%=s.amount%></td>
+            <td>
+              <form action="/shoes/<%=s.id%>" method='post'>
+                <input type="hidden" name="authenticity_token" value="<%=form_authenticity_token%>">
+                <input type="hidden" name="bought_date" value="<%=Date.today%>">
+                <input type="submit" value="Buy">
+              </form>
+            </td>
+          </tr>
+        <%end%>
+      <%end%>
+    </tbody>
+  </table>
+</div>

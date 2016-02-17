@@ -1,0 +1,96 @@
+<a href="/shoes">Go to All Products</a>
+<div>
+  <h2>Sell Product</h2>
+  <form action="/shoes/create" method="post">
+    <input type="hidden" name="authenticity_token" value="<%=form_authenticity_token%>">
+    <label for='name'>Name</label>
+    <input type="text" id="name" name="name">
+    <label for='amount' >Amount</label>
+    $ <input type="number" id="amount" name="amount">
+    <input type="hidden" name="post_date" value="<%=Date.today%>">
+    <input type="submit" value="Sell">
+  </form>
+</div>
+<div class="shoes">
+  <h2>Your products that are not yet sold</h2>
+  <table>
+    <thead>
+      <tr>
+        <td>Product</td>
+        <td>Date Posted</td>
+        <td>Amount</td>
+        <td>Action</td>
+      </tr>
+    </thead>
+    <tbody>
+      <%@user_sales.each do |s|%>
+        <%if s.buyer_id == nil%>
+          <tr>
+            <td><%=s.name%></td>
+            <td><%=s.post_date.strftime("%B %d, %Y")%></td>
+            <td>$<%=s.amount%></td>
+            <td>
+              <form action="/shoes/<%=s.id%>" method='post'>
+                <input type="hidden" name="authenticity_token" value="<%=form_authenticity_token%>">
+                <input type="hidden" name="_method" value="delete">
+                <input type="submit" value="Remove">
+              </form>
+            </td>
+          </tr>
+        <%end%>
+      <%end%>
+    </tbody>
+  </table>
+</div>
+
+<div class="shoes">
+  <h2>Sales</h2>
+  <table>
+    <thead>
+      <tr>
+        <td>Product</td>
+        <td>Date Bought</td>
+        <td>Buyer</td>
+        <td>Amount</td>
+      </tr>
+    </thead>
+    <tbody>
+      <%@user_sales.each do |s|%>
+        <%if s.buyer_id != nil%>
+          <tr>
+            <td><%=s.name%></td>
+            <td><%=s.bought_date.strftime("%B %d, %Y")%></td>
+            <td><%=s.buyer.first_name%> <%=s.buyer.last_name%></td>
+            <td>$<%=s.amount%></td>
+          </tr>
+        <%end%>
+      <%end%>
+    </tbody>
+  </table>
+  <p>Total: <%= @sales_amount%></p>
+</div>
+
+<div class="shoes">
+  <h2>purchases</h2>
+  <table>
+    <thead>
+      <tr>
+        <td>Product</td>
+        <td>Date Bought</td>
+        <td>Seller</td>
+        <td>Amount</td>
+      </tr>
+    </thead>
+    <tbody>
+      <%@user_purchases.each do |p|%>
+          <tr>
+            <td><%=p.name%></td>
+            <td><%=p.bought_date.strftime("%B %d, %Y")%></td>
+            <td><%=p.seller.first_name%> <%=p.seller.last_name%></td>
+            <td>$<%=p.amount%></td>
+          </tr>
+      <%end%>
+    </tbody>
+  </table>
+  <p>Total: <%=@user_purchases.sum(:amount)%></p>
+</div>
